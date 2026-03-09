@@ -61,7 +61,12 @@ RyuChan 提供了强大的在线文章发布功能，让你无需本地开发环
 
 ### 🔐 认证与安全  
 
-使用GitHub App私钥（.pem文件）进行身份验证，确保只有授权用户可以发布内容。  
+使用 GitHub App 私钥（`.pem` 文件）进行身份验证，确保只有授权用户可以发布内容。  
+
+> [!IMPORTANT]
+>
+> `/write` 和 `/config` 页面里导入的 `*.pem`，是 **GitHub App 的私钥**，不是 GitHub Pages 的部署密钥，也不是 SSH deploy key。
+> GitHub Pages 只负责部署静态站点，不会自动帮你生成这个 `.pem` 文件。  
 
 ### 📱 使用流程  
 
@@ -82,6 +87,246 @@ RyuChan 提供了强大的在线文章发布功能，让你无需本地开发环
 - 更新按钮替代发布按钮  
 - 删除文章功能  
 - 取消编辑选项  
+
+### 🔑 如何获取导入的 `.pem` 私钥  
+
+如果你要使用 `/write` 或 `/config` 的在线写作 / 在线配置功能，需要自己创建一个 **GitHub App**，然后下载它的私钥。流程如下：
+
+1. 打开 GitHub：
+   `Settings` -> `Developer settings` -> `GitHub Apps` -> `New GitHub App`
+2. 创建一个新的 GitHub App，建议最少配置为：
+   - `GitHub App name`：自定义，例如 `ryuchan-writer`
+   - `Homepage URL`：你的博客地址，或者仓库地址
+   - `Webhook`：如果你没有后端服务，可以先关闭
+   - `Repository permissions`：
+     - `Contents`: `Read and write`
+     - `Metadata`: `Read-only`
+3. `Where can this GitHub App be installed?`
+   - 建议选择 `Only on this account`
+4. 创建完成后，进入这个 App 的 `General` 页面：
+   - 记下 `App ID`
+   - 在 `Private keys` 区域点击 `Generate a private key`
+5. GitHub 会自动下载一个 `.pem` 文件：
+   - 这个文件就是 `/write` 页面里需要导入的密钥
+   - GitHub 不会再次完整展示这个私钥，请妥善保存
+6. 点击 `Install App`，把这个 GitHub App 安装到你的博客仓库上：
+   - 建议只授权当前博客仓库
+7. 打开博客的 `/write` 或 `/config` 页面，点击“导入密钥”，选择刚下载的 `.pem` 文件即可
+
+### 🧭 如果你现在用的是 `用户名.github.io`
+
+如果你的仓库就是这种形式：
+
+- 仓库名：`yytcjx.github.io`
+- 访问地址：`https://yytcjx.github.io`
+- 部署方式：`.github/workflows/deploy.yml` + GitHub Pages
+
+那么你可以直接按下面这组值理解配置：
+
+```yaml
+github:
+  owner: yytcjx
+  repo: yytcjx.github.io
+  branch: main
+  appId: "你的 GitHub App ID"
+  encryptKey: "你自定义的一段字符串"
+```
+
+对应关系是：
+
+- `owner`：你的 GitHub 用户名
+- `repo`：你的 Pages 仓库名，通常就是 `用户名.github.io`
+- `branch`：你的发布源码分支，通常是 `main`
+- `appId`：你创建的 GitHub App 的 `App ID`
+- `.pem`：GitHub App 的私钥，保存在你本地，进入 `/write` 时手动导入
+
+> [!NOTE]
+>
+> `https://用户名.github.io` 这个域名本身不会提供任何密钥。
+> 它只是 GitHub Pages 的默认访问域名。  
+
+### 📄 GitHub Pages 部署时要注意什么  
+
+如果你当前是通过 **GitHub Pages + GitHub Actions** 部署，这里有一个关键点：
+
+- GitHub Pages 部署 **不提供** `.pem`
+- `.pem` 是你在 **GitHub App 设置页** 里自己生成并下载的
+- 这个 `.pem` **不要提交到仓库**
+- 一般只需要在你自己的浏览器本地导入使用
+
+当前仓库的在线写作认证逻辑是：
+
+1. 使用导入的 `.pem`
+2. 配合 `App ID`
+3. 在浏览器里签发 GitHub App JWT
+4. 再向 GitHub 换取 installation token
+5. 用 installation token 直接提交文章和配置改动
+
+也就是说，**GitHub Pages 负责“展示站点”，GitHub App 负责“在线写回仓库”**。这两件事是分开的。
+
+### ⚙️ GitHub Pages 部署时如何配置 `App ID`  
+
+这个项目在前端会读取以下 GitHub 配置：
+
+- `owner`
+- `repo`
+- `branch`
+- `appId`
+
+最简单的方式，是直接在 `ryuchan.config.yaml` 里填上你的 `appId`：
+
+```yaml
+github:
+  owner: your-github-name
+  repo: your-repo-name
+  branch: main
+  appId: "123456"
+  encryptKey: "change-this-key"
+```
+
+说明：
+
+- `appId` 是 GitHub App 的 `App ID`，不是私钥
+- `encryptKey` 只是前端缓存 `.pem` 时使用的加密字符串，不是 GitHub 提供的密钥
+- 真正敏感的是 `.pem` 文件本身，不要上传到仓库
+
+如果你不想把 `appId` 写进仓库，也可以在 GitHub Actions 构建时注入环境变量，例如：
+
+```yaml
+env:
+  PUBLIC_GITHUB_OWNER: ${{ vars.PUBLIC_GITHUB_OWNER }}
+  PUBLIC_GITHUB_REPO: ${{ vars.PUBLIC_GITHUB_REPO }}
+  PUBLIC_GITHUB_BRANCH: ${{ vars.PUBLIC_GITHUB_BRANCH }}
+  PUBLIC_GITHUB_APP_ID: ${{ vars.PUBLIC_GITHUB_APP_ID }}
+  PUBLIC_GITHUB_ENCRYPT_KEY: ${{ vars.PUBLIC_GITHUB_ENCRYPT_KEY }}
+```
+
+然后在 GitHub 仓库里配置这些 `Actions Variables`。
+
+### 🛠️ 你现在这份 `deploy.yml` 应该如何配
+
+如果你用的是当前仓库里的 `.github/workflows/deploy.yml`，建议把这些值配置到：
+
+`GitHub Repository` -> `Settings` -> `Secrets and variables` -> `Actions` -> `Variables`
+
+需要创建的变量如下：
+
+- `PUBLIC_GITHUB_OWNER`
+- `PUBLIC_GITHUB_REPO`
+- `PUBLIC_GITHUB_BRANCH`
+- `PUBLIC_GITHUB_APP_ID`
+- `PUBLIC_GITHUB_ENCRYPT_KEY`
+
+如果你的仓库就是 `yytcjx.github.io`，可以直接参考下面这个例子：
+
+- `PUBLIC_GITHUB_OWNER = yytcjx`
+- `PUBLIC_GITHUB_REPO = yytcjx.github.io`
+- `PUBLIC_GITHUB_BRANCH = main`
+- `PUBLIC_GITHUB_APP_ID = 你的 GitHub App ID`
+- `PUBLIC_GITHUB_ENCRYPT_KEY = 任意一段你自己定义的字符串`
+
+当前仓库的 `deploy.yml` 已经支持在构建阶段读取这些变量，因此你不需要把它们硬编码到工作流里。
+
+### 🚨 如果你看到 `actions/jekyll-build-pages@v1` 报错
+
+如果 Actions 日志里出现类似下面的信息：
+
+```txt
+Run actions/jekyll-build-pages@v1
+Invalid YAML front matter in /src/components/...astro
+```
+
+这通常说明：
+
+- GitHub Pages 还在使用 **默认 Jekyll 构建模式**
+- 它正在尝试直接构建你的源码仓库
+- 它没有使用 `.github/workflows/deploy.yml` 产出的 `dist/` 静态站点
+
+而 Astro 项目源码里包含很多 `.astro`、`.tsx`、`.mdx` 文件，Jekyll 会误判这些文件，从而出现 `Invalid YAML front matter` 或 `YAML Exception`。
+
+#### 正确修复方式
+
+去你的仓库页面操作：
+
+`Settings` -> `Pages` -> `Build and deployment`
+
+把这里的 `Source` 改成：
+
+`GitHub Actions`
+
+不要继续使用：
+
+- `Deploy from a branch`
+
+因为 `Deploy from a branch` 会触发 GitHub Pages 的默认 Jekyll 构建，它适合纯静态 HTML 仓库，不适合这个 Astro 源码仓库。
+
+#### 你当前这个项目的正确部署链路
+
+应该是：
+
+1. 你 push 到 `main`
+2. `.github/workflows/deploy.yml` 运行
+3. Astro 构建生成 `dist/`
+4. `actions/upload-pages-artifact` 上传构建产物
+5. `actions/deploy-pages` 发布到 GitHub Pages
+
+也就是说，GitHub Pages 应该接收的是 **构建后的 `dist`**，不是你的仓库源码。
+
+#### 一句话判断是否配置对了
+
+- 如果日志里看到 `actions/jekyll-build-pages@v1`
+  - 说明你还在走错误的 Jekyll 模式
+- 如果日志里看到 `.github/workflows/deploy.yml` 里的 `Build Astro site` 和 `Deploy to GitHub Pages`
+  - 说明你已经切到正确的 GitHub Actions 模式
+
+### 📋 GitHub App 创建时，字段怎么填更稳妥
+
+注册 GitHub App 时，如果你只是为了这个博客的在线写作功能，建议这样填写：
+
+- `GitHub App name`
+  - 自定义，例如 `yytcjx-blog-writer`
+- `Homepage URL`
+  - 填你的博客地址，例如 `https://yytcjx.github.io`
+- `Callback URL`
+  - 这个项目当前不是走 OAuth 用户登录流程，可以先留空
+- `Setup URL`
+  - 可留空
+- `Webhook`
+  - 如果你没有额外后端服务，可以先取消勾选 `Active`
+- `Permissions`
+  - `Contents: Read and write`
+  - `Metadata: Read-only`
+- `Where can this GitHub App be installed?`
+  - 个人博客场景建议选 `Only on this account`
+
+创建后，GitHub Docs 可参考：
+
+- 注册 GitHub App：https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app
+- 管理 GitHub App 私钥：https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/managing-private-keys-for-github-apps
+- 安装自己的 GitHub App：https://docs.github.com/apps/installing-github-apps
+- GitHub Pages 自定义工作流：https://docs.github.com/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
+
+### 🔒 `.pem` 应该放哪里，不应该放哪里
+
+建议：
+
+- 保存在你自己的电脑上
+- 放到密码管理器或安全的私有存储里
+- 需要写作时，在浏览器里手动导入
+
+不要这样做：
+
+- 不要提交到 Git 仓库
+- 不要放到 `public/`
+- 不要写进 `README.md`
+- 不要直接塞进 GitHub Pages 构建产物
+- 不要误当成 SSH deploy key 使用
+
+因为这个 `.pem` 一旦泄露，别人就可能以这个 GitHub App 的身份向你的仓库写入内容。  
+
+> [!TIP]
+>
+> 如果你的 `main` 分支开启了 branch protection 或 ruleset，请把这个 GitHub App 加到允许推送 / bypass 的列表里，否则在线发布文章时可能会提交失败。  
 
 ---
 
@@ -184,6 +429,28 @@ pnpm run dev
 ## 🔧 配置
 
 Ryuchan 使用 `ryuchan.config.yaml` 作为配置文件，你可以通过在线配置编辑器或直接编辑此文件来管理网站设置。
+
+### GitHub 配置（在线写作 / 在线配置必需）
+
+```yaml
+github:
+  owner: your-github-name
+  repo: your-repo-name
+  branch: main
+  appId: "123456"
+  encryptKey: "change-this-key"
+```
+
+- `owner`：仓库所有者
+- `repo`：仓库名
+- `branch`：在线写作要提交到的分支，通常是 `main`
+- `appId`：GitHub App 的 `App ID`
+- `encryptKey`：浏览器缓存 `.pem` 时使用的加密字符串
+
+> [!NOTE]
+>
+> `appId` 可以写在 `ryuchan.config.yaml`，也可以通过 `PUBLIC_GITHUB_APP_ID` 环境变量注入。
+> 但 `.pem` 私钥本身不要写进环境变量、不要提交到仓库、不要放进 GitHub Pages。  
 
 ### 网站基本信息 (site)
 

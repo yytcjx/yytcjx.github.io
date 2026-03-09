@@ -20,9 +20,18 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PUBLIC_GITHUB_OWNER: ${{ vars.PUBLIC_GITHUB_OWNER }}
+      PUBLIC_GITHUB_REPO: ${{ vars.PUBLIC_GITHUB_REPO }}
+      PUBLIC_GITHUB_BRANCH: ${{ vars.PUBLIC_GITHUB_BRANCH }}
+      PUBLIC_GITHUB_APP_ID: ${{ vars.PUBLIC_GITHUB_APP_ID }}
+      PUBLIC_GITHUB_ENCRYPT_KEY: ${{ vars.PUBLIC_GITHUB_ENCRYPT_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
