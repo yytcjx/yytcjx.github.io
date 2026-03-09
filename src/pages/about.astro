@@ -8,6 +8,9 @@ import { SITE_NARRATIVE, SITE_PILLARS } from "@/data/siteNarrative";
 import { getAllPosts } from "@utils/blogUtils";
 
 const aboutPage = SITE_PAGES.about || {};
+const aboutLead = aboutPage.leadParagraphs || SITE_NARRATIVE.aboutLead;
+const aboutWorkflow = aboutPage.workflowSteps || SITE_NARRATIVE.aboutWorkflow;
+const aboutPillars = aboutPage.pillars || SITE_PILLARS;
 const posts = await getAllPosts();
 const pinnedPosts = posts.filter(post => post.data.badge === "Pin").slice(0, 3);
 const postCount = posts.length;
@@ -39,7 +42,7 @@ const githubUsername = GITHUB_CONFIG?.owner || "kobaridev";
           </div>
 
           <div class="space-y-3 text-base-content/75 leading-relaxed">
-            {SITE_NARRATIVE.aboutLead.map((paragraph) => (
+            {aboutLead.map((paragraph) => (
               <p>{paragraph}</p>
             ))}
           </div>
@@ -96,7 +99,7 @@ const githubUsername = GITHUB_CONFIG?.owner || "kobaridev";
       </div>
 
       <div class="grid gap-4 md:grid-cols-3">
-        {SITE_PILLARS.map((pillar) => (
+        {aboutPillars.map((pillar) => (
           <div class="rounded-[1.5rem] bg-base-200/40 p-5 ring-1 ring-base-200">
             <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <Icon name={pillar.icon} class="w-5 h-5" />
@@ -115,7 +118,7 @@ const githubUsername = GITHUB_CONFIG?.owner || "kobaridev";
           <h2 class="text-2xl font-bold">写作与维护方式</h2>
         </div>
         <div class="space-y-3">
-          {SITE_NARRATIVE.aboutWorkflow.map((item, index) => (
+          {aboutWorkflow.map((item, index) => (
             <div class="flex items-start gap-3 rounded-2xl bg-base-200/40 p-4">
               <div class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-content text-sm font-bold">
                 {index + 1}

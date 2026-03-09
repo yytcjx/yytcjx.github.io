@@ -49,6 +49,13 @@ export interface PageConfig {
   title: string;
   subtitle: string;
   typewriterTexts?: string[]; // 新增打字机文本配置  
+  leadParagraphs?: string[];
+  workflowSteps?: string[];
+  pillars?: {
+    icon: string;
+    title: string;
+    description: string;
+  }[];
 }
 
 export interface SocialIcon {

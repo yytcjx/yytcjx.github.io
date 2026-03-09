@@ -40,6 +40,18 @@ const COMMENT_PROVIDERS = [
     { value: 'waline', label: 'Waline' }
 ]
 
+function textArrayToMultiline(value: unknown): string {
+    if (!Array.isArray(value)) return ''
+    return value.map(item => String(item ?? '').trim()).filter(Boolean).join('\n')
+}
+
+function multilineToTextArray(value: string): string[] {
+    return value
+        .split('\n')
+        .map(item => item.trim())
+        .filter(Boolean)
+}
+
 export function ConfigPage() {
     const [configContent, setConfigContent] = useState('')
     const [lastFetchedContent, setLastFetchedContent] = useState<string | null>(null)
@@ -149,6 +161,19 @@ export function ConfigPage() {
         }
 
         updateConfigValue('user.sidebar.social', social)
+    }
+
+    const handleAboutPillarChange = (index: number, field: 'icon' | 'title' | 'description', value: string) => {
+        const pillars = [...(parsedConfig?.site?.pages?.about?.pillars || [])]
+        if (!pillars[index]) {
+            pillars[index] = {
+                icon: 'lucide:star',
+                title: '',
+                description: ''
+            }
+        }
+        pillars[index][field] = value
+        updateConfigValue('site.pages.about.pillars', pillars)
     }
 
     const addSocial = () => {
@@ -528,6 +553,80 @@ export function ConfigPage() {
                                             placeholder="Ciallo～(∠・ω<)⌒★"
                                             value={parsedConfig?.user?.description || ''}
                                             onChange={e => updateConfigValue('user.description', e.target.value)} />
+                                    </div>
+                                </div>
+
+                                <div className="card bg-base-100 shadow-sm border border-base-200 p-6 rounded-2xl space-y-6">
+                                    <h3 className="font-bold text-lg text-primary border-b border-base-200 pb-2">关于页资料</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                                        <div className="form-control w-full">
+                                            <label className="label"><span className="label-text font-medium">关于页标题</span></label>
+                                            <input type="text" className="input input-bordered w-full bg-base-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                                value={parsedConfig?.site?.pages?.about?.title || ''}
+                                                onChange={e => updateConfigValue('site.pages.about.title', e.target.value)} />
+                                        </div>
+                                        <div className="form-control w-full">
+                                            <label className="label"><span className="label-text font-medium">关于页副标题</span></label>
+                                            <input type="text" className="input input-bordered w-full bg-base-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                                value={parsedConfig?.site?.pages?.about?.subtitle || ''}
+                                                onChange={e => updateConfigValue('site.pages.about.subtitle', e.target.value)} />
+                                        </div>
+                                    </div>
+                                    <div className="form-control w-full">
+                                        <label className="label"><span className="label-text font-medium">导语段落</span></label>
+                                        <textarea
+                                            className="textarea textarea-bordered w-full h-28 bg-base-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                                            value={textArrayToMultiline(parsedConfig?.site?.pages?.about?.leadParagraphs)}
+                                            onChange={e => updateConfigValue('site.pages.about.leadParagraphs', multilineToTextArray(e.target.value))}
+                                            placeholder={'每行一段，显示在关于页头像和社交按钮下面'}
+                                        />
+                                    </div>
+                                    <div className="form-control w-full">
+                                        <label className="label"><span className="label-text font-medium">写作与维护方式</span></label>
+                                        <textarea
+                                            className="textarea textarea-bordered w-full h-28 bg-base-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                                            value={textArrayToMultiline(parsedConfig?.site?.pages?.about?.workflowSteps)}
+                                            onChange={e => updateConfigValue('site.pages.about.workflowSteps', multilineToTextArray(e.target.value))}
+                                            placeholder={'每行一条，会显示在关于页的流程卡片里'}
+                                        />
+                                    </div>
+                                    <div className="space-y-4">
+                                        <div className="text-sm font-medium text-base-content/70">关注主题卡片</div>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            {(parsedConfig?.site?.pages?.about?.pillars || []).map((pillar: any, index: number) => (
+                                                <div key={index} className="rounded-2xl border border-base-200 bg-base-50 p-4 space-y-3">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div className="form-control w-full">
+                                                            <label className="label"><span className="label-text text-xs text-base-content/60">图标</span></label>
+                                                            <input
+                                                                type="text"
+                                                                className="input input-sm input-bordered w-full bg-base-100 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                                                value={pillar?.icon || ''}
+                                                                onChange={e => handleAboutPillarChange(index, 'icon', e.target.value)}
+                                                                placeholder="lucide:notebook-pen"
+                                                            />
+                                                        </div>
+                                                        <div className="form-control w-full">
+                                                            <label className="label"><span className="label-text text-xs text-base-content/60">标题</span></label>
+                                                            <input
+                                                                type="text"
+                                                                className="input input-sm input-bordered w-full bg-base-100 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                                                                value={pillar?.title || ''}
+                                                                onChange={e => handleAboutPillarChange(index, 'title', e.target.value)}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="form-control w-full">
+                                                        <label className="label"><span className="label-text text-xs text-base-content/60">说明</span></label>
+                                                        <textarea
+                                                            className="textarea textarea-bordered w-full h-24 bg-base-100 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                                                            value={pillar?.description || ''}
+                                                            onChange={e => handleAboutPillarChange(index, 'description', e.target.value)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
 
