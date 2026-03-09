@@ -113,7 +113,7 @@ site:
       target: _self
 anime:
   bilibili:
-    uid: '1536411565'
+    uid: '1479347046'
   tmdb:
     apiKey: 08a6bef260044f70c150251c79f2e476
     listId: '8556173'
@@ -132,15 +132,15 @@ umami:
 user:
   name: KoBariDev
   description: Ciallo～(∠・ω<)⌒★
-  site: https://hub.xiaozhangya.xin
+  site: https://smlyfm.github.io/
   avatar: /profile.png
   sidebar:
     social:
-      - href: https://github.com/kobaridev
+      - href: https://github.com/goblinunde
         ariaLabel: Github
         title: Github
         svg: ri:github-line
-      - href: https://space.bilibili.com/1536411565
+      - href: https://space.bilibili.com/1479347046
         ariaLabel: BiliBili
         title: BiliBili
         svg: ri:bilibili-line
@@ -155,11 +155,11 @@ user:
         svg: ri:weibo-fill
   footer:
     social:
-      - href: https://github.com/kobaridev
+      - href: https://github.com/goblinunde
         ariaLabel: Github
         title: Github
         svg: ri:github-line
-      - href: https://space.bilibili.com/1536411565
+      - href: https://space.bilibili.com/1479347046
         ariaLabel: BiliBili
         title: BiliBili
         svg: ri:bilibili-line

@@ -52,8 +52,12 @@ function multilineToTextArray(value: string): string[] {
         .filter(Boolean)
 }
 
-export function ConfigPage() {
-    const [configContent, setConfigContent] = useState('')
+type ConfigPageProps = {
+    initialConfigContent?: string
+}
+
+export function ConfigPage({ initialConfigContent = '' }: ConfigPageProps) {
+    const [configContent, setConfigContent] = useState(initialConfigContent)
     const [lastFetchedContent, setLastFetchedContent] = useState<string | null>(null)
     const [isDirty, setIsDirty] = useState(false)
     const [loading, setLoading] = useState(false)

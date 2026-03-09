@@ -18,7 +18,15 @@ const pinnedCount = pinnedPosts.length;
 const categoryCount = new Set(posts.flatMap(post => post.data.categories || [])).size;
 const tagCount = new Set(posts.flatMap(post => post.data.tags || [])).size;
 const socialLinks = (USER_SIDEBAR_SOCIAL_ICONS || []).slice(0, 4);
-const githubUsername = GITHUB_CONFIG?.owner || "kobaridev";
+const githubLink = (USER_SIDEBAR_SOCIAL_ICONS || []).find(link => link?.href?.includes("github.com"))?.href;
+let githubUsername = GITHUB_CONFIG?.owner || "kobaridev";
+if (githubLink) {
+  try {
+    githubUsername = new URL(githubLink).pathname.replaceAll("/", "") || githubUsername;
+  } catch {
+    // keep config fallback
+  }
+}
 ---
 
 <BaseLayout title={aboutPage.title || "About"} isIndexed={false}>
