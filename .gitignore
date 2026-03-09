@@ -28,3 +28,6 @@ public/pagefind/
 
 # pnpm store
 pnpm-store/
+
+# local backups
+backups/

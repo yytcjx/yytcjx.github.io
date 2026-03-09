@@ -1,7 +1,7 @@
 site:
   tab: RyuChan
   title: RyuChan
-  description: 🌸 轻盈、优雅、纯净 —— 用文字与图片记录生活与创意
+  description: 围绕写作系统、内容治理与静态博客运维持续更新的个人博客
   language: zh
   favicon: /favicon.png
   theme:
@@ -22,8 +22,8 @@ site:
   icp_link: https://icp.gov.moe/?keyword=20261117
   pages:
     home:
-      title: RyuChan's Blog
-      subtitle: 欲买桂花同载酒，终不似，少年游！
+      title: RyuChan
+      subtitle: 围绕写作系统、内容治理与静态博客运维持续更新
       typewriterTexts:
         - 🌸 欲买桂花同载酒，终不似，少年游！
         - 🌸 花有重开日，人无再少年！
@@ -33,11 +33,11 @@ site:
       title: 友人帐
       subtitle: 记录那些珍贵的友谊，分享彼此的故事
     about:
-      title: About Me
-      subtitle: 一个热爱生活与技术的普通人！
+      title: 关于
+      subtitle: 关于这个博客的关注主题、维护方式与长期方向
     navigation:
       title: 网站导航
-      subtitle: 收藏的常用网站和工具链接
+      subtitle: 围绕写作、部署、设计与内容维护整理的常用资源
     anime:
       title: 追番
       subtitle: 记录和分享我喜欢的动漫作品

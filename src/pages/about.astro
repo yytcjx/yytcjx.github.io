@@ -1,137 +1,161 @@
----  
-import BaseLayout from "@/layouts/BaseLayout.astro";  
-import { Icon } from "astro-icon/components";  
-import Card from "@/components/temple/Card.astro";  
-import GitHubStats from "@/components/mdx/GitHubStats.astro";  
----  
-  
-<BaseLayout title="About" isIndexed={false}>  
-  <Card class="p-4 md:p-8">  
-    <div class="space-y-10 mb-8">  
-      <!-- Profile Section -->  
-      <section class="flex flex-col md:flex-row gap-8 items-center md:items-start">  
-        <div class="avatar">  
-          <div  
-            class="w-32 h-32 md:w-40 md:h-40 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden"  
-          >  
-            <img src="https://github.com/kobaridev.png" alt="Xiaozhang" width="160" height="160" loading="eager" />  
-          </div>  
-        </div>  
-  
-        <div class="flex-1 text-center md:text-left">  
-          <h1 class="text-3xl md:text-4xl font-bold mb-2">Xiaozhang</h1>  
-          <p class="text-xl text-base-content/80 mb-4">全栈开发者 & 开源爱好者</p>  
-  
-          <div class="flex flex-wrap gap-3 justify-center md:justify-start mb-6">  
-            <a  
-              href="https://github.com/kobaridev"  
-              target="_blank"  
-              rel="noopener noreferrer"  
-              class="btn btn-sm btn-outline gap-2"  
-            >  
-              <Icon name="lucide:github" class="w-4 h-4" />  
-              <span>GitHub</span>  
-            </a>  
-            <a  
-              href="https://twitter.com/xzz_ya"  
-              target="_blank"  
-              rel="noopener noreferrer"  
-              class="btn btn-sm btn-outline gap-2"  
-            >  
-              <Icon name="lucide:twitter" class="w-4 h-4" />  
-              <span>Twitter</span>  
-            </a>  
-            <a href="mailto:xzzya03@outlook.com" class="btn btn-sm btn-outline gap-2">  
-              <Icon name="lucide:mail" class="w-4 h-4" />  
-              <span>Email</span>  
-            </a>  
-          </div>  
-  
-          <div class="text-base-content/80 leading-relaxed">  
-            <p>👋 你好！我是 Xiaozhang，一名热爱技术的全栈开发者。</p>  
-            <p class="mt-2">💻 专注于前端开发和用户体验设计，喜欢探索新技术，享受用代码解决问题的过程。</p>  
-            <p class="mt-2">🌱 坚信开源精神，积极参与开源项目，相信技术可以让世界变得更美好。</p>  
-          </div>  
-        </div>  
-      </section>  
-  
-      <!-- About This Site -->  
-      <section>  
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">  
-          <Icon name="lucide:info" class="w-6 h-6 text-primary" />  
-          <span>关于本站</span>  
-        </h2>  
-          
-        <div class="prose prose-base dark:prose-invert max-w-none">  
-          <p>  
-            这是我的个人博客，一个简洁、优雅、快速的静态博客系统，基于 Astro 5.0+ & Tailwind CSS 构建。  
-          </p>  
-            
-          <h3 class="text-xl font-bold mt-4 mb-2">🌟 核心特色</h3>  
-          <ul class="list-disc list-inside space-y-1">  
-            <li>📝 <strong>在线发布</strong>：无需本地环境，浏览器中直接编写和发布文章</li>  
-            <li>⚙️ <strong>可视化配置</strong>：Web界面管理网站设置，零代码操作</li>  
-            <li>🚀 <strong>极速体验</strong>：基于 Astro 构建，提供极速的访问速度与优秀的 SEO</li>  
-            <li>🎨 <strong>优雅设计</strong>：使用 Tailwind CSS 与 daisyUI，支持深色/浅色主题</li>  
-            <li>📱 <strong>完美适配</strong>：移动端优先的响应式设计，优化卡片布局与网格导航</li>  
-            <li>🔍 <strong>智能搜索</strong>：集成 Pagefind，毫秒级全文搜索</li>  
-            <li>⚡ <strong>流畅动画</strong>：ClientRouter 实现丝滑的页面过渡效果</li>  
-          </ul>  
-  
-          <h3 class="text-xl font-bold mt-4 mb-2">🎯 功能亮点</h3>  
-          <ul class="list-disc list-inside space-y-1">  
-            <li>📚 追番管理：集成 TMDB API，记录和分享喜欢的动漫作品</li>  
-            <li>🧭 网站导航：分类整理常用工具和资源链接</li>  
-            <li>👥 友链展示：展示朋友们的优秀博客和项目</li>  
-            <li>📊 数据统计：集成 Umami 分析，了解网站访问情况</li>  
-            <li>💬 评论系统：支持 Giscus 和 Waline，与读者互动交流</li>  
-          </ul>  
-        </div>  
-      </section>  
-  
-      <!-- GitHub Stats -->  
-      <section>  
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">  
-          <Icon name="lucide:github" class="w-6 h-6 text-primary" />  
-          <span>开源贡献</span>  
-        </h2>  
-  
-        <GitHubStats username="kobaridev" showLanguages={false} showCommitGraph={true} />  
-      </section>  
-  
-      <!-- Tech Stack -->  
-      <section>  
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">  
-          <Icon name="lucide:code-2" class="w-6 h-6 text-primary" />  
-          <span>技术栈</span>  
-        </h2>  
-  
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">  
-          {  
-            [  
-              { name: "Astro", icon: "simple-icons:astro", color: "oklch(0.5 0.2 300)" },  
-              { name: "JavaScript", icon: "simple-icons:javascript", color: "oklch(0.8 0.2 80)" },  
-              { name: "TypeScript", icon: "simple-icons:typescript", color: "oklch(0.6 0.2 250)" },  
-              { name: "React", icon: "simple-icons:react", color: "oklch(0.7 0.2 200)" },  
-              { name: "Node.js", icon: "simple-icons:nodedotjs", color: "oklch(0.7 0.2 140)" },  
-              { name: "TailwindCSS", icon: "simple-icons:tailwindcss", color: "oklch(0.6 0.2 220)" },  
-              { name: "HTML5", icon: "simple-icons:html5", color: "oklch(0.7 0.2 30)" },  
-              { name: "CSS3", icon: "simple-icons:css3", color: "oklch(0.7 0.2 220)" },  
-              { name: "Git", icon: "simple-icons:git", color: "oklch(0.7 0.2 30)" },  
-              { name: "Python", icon: "simple-icons:python", color: "oklch(0.7 0.2 250)" },  
-              { name: "Docker", icon: "simple-icons:docker", color: "oklch(0.6 0.2 200)" },  
-              { name: "Vue.js", icon: "simple-icons:vuedotjs", color: "oklch(0.6 0.2 120)" },  
-            ].map((tech) => (  
-              <div class="flex flex-col items-center justify-center p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors">  
-                <div class="text-3xl mb-2" style={`color: ${tech.color}`}>  
-                  <Icon name={tech.icon} class="w-10 h-10" />  
-                </div>  
-                <span class="text-sm font-medium">{tech.name}</span>  
-              </div>  
-            ))  
-          }  
-        </div>  
-      </section>  
-    </div>  
-  </Card>  
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import Card from "@/components/temple/Card.astro";
+import GitHubStats from "@/components/mdx/GitHubStats.astro";
+import { GITHUB_CONFIG, SITE_PAGES, USER_AVATAR, USER_DESCRIPTION, USER_NAME, USER_SIDEBAR_SOCIAL_ICONS, USER_SITE } from "@config";
+import { SITE_NARRATIVE, SITE_PILLARS } from "@/data/siteNarrative";
+import { getAllPosts } from "@utils/blogUtils";
+
+const aboutPage = SITE_PAGES.about || {};
+const posts = await getAllPosts();
+const pinnedPosts = posts.filter(post => post.data.badge === "Pin").slice(0, 3);
+const postCount = posts.length;
+const pinnedCount = pinnedPosts.length;
+const categoryCount = new Set(posts.flatMap(post => post.data.categories || [])).size;
+const tagCount = new Set(posts.flatMap(post => post.data.tags || [])).size;
+const socialLinks = (USER_SIDEBAR_SOCIAL_ICONS || []).slice(0, 4);
+const githubUsername = GITHUB_CONFIG?.owner || "kobaridev";
+---
+
+<BaseLayout title={aboutPage.title || "About"} isIndexed={false}>
+  <div class="space-y-8">
+    <Card class="overflow-hidden border border-primary/10 bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5 p-6 md:p-8">
+      <div class="flex flex-col gap-8 md:flex-row md:items-start">
+        <div class="shrink-0">
+          <div class="w-28 h-28 md:w-36 md:h-36 rounded-[1.75rem] overflow-hidden ring ring-primary/30 ring-offset-base-100 ring-offset-4 shadow-xl">
+            <img src={USER_AVATAR} alt={USER_NAME} class="w-full h-full object-cover" width="144" height="144" loading="eager" />
+          </div>
+        </div>
+
+        <div class="flex-1 space-y-5">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
+              <Icon name="lucide:circle-user-round" class="w-4 h-4" />
+              <span>{aboutPage.subtitle || "关于这个博客"}</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold">{USER_NAME}</h1>
+            <p class="text-lg text-base-content/70">{USER_DESCRIPTION}</p>
+          </div>
+
+          <div class="space-y-3 text-base-content/75 leading-relaxed">
+            {SITE_NARRATIVE.aboutLead.map((paragraph) => (
+              <p>{paragraph}</p>
+            ))}
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            {socialLinks.map((link) => (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline gap-2 rounded-full"
+              >
+                <Icon name={link.svg} class="w-4 h-4" />
+                <span>{link.title}</span>
+              </a>
+            ))}
+            <a href={USER_SITE} target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary gap-2 rounded-full">
+              <Icon name="lucide:globe" class="w-4 h-4" />
+              <span>个人主页</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </Card>
+
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <Card class="p-5">
+        <div class="text-sm text-base-content/50">已发布文章</div>
+        <div class="mt-2 text-3xl font-bold">{postCount}</div>
+      </Card>
+      <Card class="p-5">
+        <div class="text-sm text-base-content/50">置顶文章</div>
+        <div class="mt-2 text-3xl font-bold">{pinnedCount}</div>
+      </Card>
+      <Card class="p-5">
+        <div class="text-sm text-base-content/50">分类数量</div>
+        <div class="mt-2 text-3xl font-bold">{categoryCount}</div>
+      </Card>
+      <Card class="p-5">
+        <div class="text-sm text-base-content/50">标签数量</div>
+        <div class="mt-2 text-3xl font-bold">{tagCount}</div>
+      </Card>
+    </div>
+
+    <Card class="p-6 md:p-8">
+      <div class="mb-6 flex items-center gap-3">
+        <div class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <Icon name="lucide:layers-3" class="w-5 h-5" />
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold">当前关注主题</h2>
+          <p class="text-base-content/60">首页、关于页和导航页会围绕同一套主题表达展开。</p>
+        </div>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-3">
+        {SITE_PILLARS.map((pillar) => (
+          <div class="rounded-[1.5rem] bg-base-200/40 p-5 ring-1 ring-base-200">
+            <div class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Icon name={pillar.icon} class="w-5 h-5" />
+            </div>
+            <h3 class="mb-2 text-lg font-semibold">{pillar.title}</h3>
+            <p class="text-sm leading-relaxed text-base-content/65">{pillar.description}</p>
+          </div>
+        ))}
+      </div>
+    </Card>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <Card class="p-6 md:p-8">
+        <div class="mb-5 flex items-center gap-3">
+          <Icon name="lucide:workflow" class="w-6 h-6 text-primary" />
+          <h2 class="text-2xl font-bold">写作与维护方式</h2>
+        </div>
+        <div class="space-y-3">
+          {SITE_NARRATIVE.aboutWorkflow.map((item, index) => (
+            <div class="flex items-start gap-3 rounded-2xl bg-base-200/40 p-4">
+              <div class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-content text-sm font-bold">
+                {index + 1}
+              </div>
+              <p class="text-sm leading-relaxed text-base-content/70">{item}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card class="p-6 md:p-8">
+        <div class="mb-5 flex items-center gap-3">
+          <Icon name="lucide:book-marked" class="w-6 h-6 text-primary" />
+          <h2 class="text-2xl font-bold">推荐起步阅读</h2>
+        </div>
+        <div class="space-y-3">
+          {pinnedPosts.map((post) => (
+            <a href={`/blog/${post.slug}`} class="block rounded-2xl bg-base-200/40 p-4 transition-all hover:-translate-y-0.5 hover:bg-base-200/70">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <h3 class="font-semibold">{post.data.title}</h3>
+                  <p class="mt-1 text-sm text-base-content/65">{post.data.description}</p>
+                </div>
+                <Icon name="lucide:arrow-up-right" class="w-5 h-5 text-primary shrink-0" />
+              </div>
+            </a>
+          ))}
+        </div>
+      </Card>
+    </div>
+
+    <Card class="p-6 md:p-8">
+      <div class="mb-6 flex items-center gap-3">
+        <Icon name="lucide:github" class="w-6 h-6 text-primary" />
+        <div>
+          <h2 class="text-2xl font-bold">GitHub 概览</h2>
+          <p class="text-base-content/60">站点内容维护之外，代码和仓库工作流也会在这里持续迭代。</p>
+        </div>
+      </div>
+      <GitHubStats username={githubUsername} showLanguages={false} showCommitGraph={true} />
+    </Card>
+  </div>
 </BaseLayout>

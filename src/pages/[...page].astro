@@ -4,10 +4,12 @@ import PostCard from "@components/PostCard.astro";
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Pagination from "@components/widgets/Pagination.astro";
 import CardGroup from "@components/temple/CardGroup.astro";
+import Card from "@components/temple/Card.astro";
 import { Icon } from "astro-icon/components";
-import { t } from "@config";
-import { generatePageLinks } from "@utils/blogUtils";
+import { SITE_DESCRIPTION, SITE_PAGES, SITE_TITLE, t } from "@config";
+import { generatePageLinks, getAllPosts } from "@utils/blogUtils";
 import { getMainBlogPaginationPaths } from "@utils/paginationUtils";
+import { SITE_NARRATIVE, SITE_PILLARS } from "@/data/siteNarrative";
 
 export async function getStaticPaths({ paginate }: { paginate: any }) {
   return getMainBlogPaginationPaths({ paginate });
@@ -16,9 +18,78 @@ export async function getStaticPaths({ paginate }: { paginate: any }) {
 const { page }: { page: Page } = Astro.props;
 const totalPages = Math.ceil(page.total / page.size);
 const pageLinks = generatePageLinks(totalPages);
+const allPosts = await getAllPosts();
+const pinnedCount = allPosts.filter(post => post.data.badge === "Pin").length;
+const categoryCount = new Set(allPosts.flatMap(post => post.data.categories || [])).size;
+const homePage = SITE_PAGES.home || {};
 ---
 
-<BaseLayout title="Blog" isIndexed={false}>
+<BaseLayout title={homePage.title || SITE_TITLE || "Blog"} isIndexed={false}>
+  {page.current === 1 && (
+    <Card class="mb-8 overflow-hidden border border-primary/10 bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+      <div class="p-6 md:p-8 space-y-6">
+        <div class="flex flex-col gap-3">
+          <div class="inline-flex w-fit items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
+            <Icon name="lucide:compass" class="h-4 w-4" />
+            <span>站点导读</span>
+          </div>
+          <h1 class="text-3xl md:text-4xl font-bold leading-tight">
+            {homePage.subtitle || SITE_DESCRIPTION}
+          </h1>
+          <p class="max-w-3xl text-base md:text-lg text-base-content/70 leading-relaxed">
+            {SITE_NARRATIVE.mission} {SITE_NARRATIVE.homeLead}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="rounded-2xl bg-base-100/80 px-4 py-3 shadow-sm">
+            <div class="text-sm text-base-content/50">文章总数</div>
+            <div class="text-2xl font-bold">{page.total}</div>
+          </div>
+          <div class="rounded-2xl bg-base-100/80 px-4 py-3 shadow-sm">
+            <div class="text-sm text-base-content/50">置顶文章</div>
+            <div class="text-2xl font-bold">{pinnedCount}</div>
+          </div>
+          <div class="rounded-2xl bg-base-100/80 px-4 py-3 shadow-sm">
+            <div class="text-sm text-base-content/50">分类数量</div>
+            <div class="text-2xl font-bold">{categoryCount}</div>
+          </div>
+          <div class="rounded-2xl bg-base-100/80 px-4 py-3 shadow-sm">
+            <div class="text-sm text-base-content/50">当前页码</div>
+            <div class="text-2xl font-bold">{page.current}</div>
+          </div>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          {SITE_PILLARS.map((pillar) => (
+            <div class="rounded-[1.5rem] bg-base-100/90 p-5 shadow-sm ring-1 ring-base-200/60">
+              <div class="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Icon name={pillar.icon} class="h-5 w-5" />
+              </div>
+              <h2 class="mb-2 text-lg font-semibold">{pillar.title}</h2>
+              <p class="text-sm leading-relaxed text-base-content/65">{pillar.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <a href="/about" class="btn btn-primary gap-2 rounded-full">
+            <Icon name="lucide:user-round" class="h-4 w-4" />
+            <span>了解本站</span>
+          </a>
+          <a href="/navigation" class="btn btn-outline gap-2 rounded-full">
+            <Icon name="lucide:waypoints" class="h-4 w-4" />
+            <span>查看导航</span>
+          </a>
+          <a href="/blog/archives" class="btn btn-outline gap-2 rounded-full">
+            <Icon name="lucide:archive" class="h-4 w-4" />
+            <span>浏览归档</span>
+          </a>
+        </div>
+      </div>
+    </Card>
+  )}
+
   <!-- Blog Navigation Cards -->
   <CardGroup cols="2" class="grid-cols-2">
     <!-- Archives Card -->

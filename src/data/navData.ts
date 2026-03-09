@@ -192,7 +192,7 @@ export const NAV_DATA: NavCategory[] = [
         ]
     },
     {
-        title: "Useful Resources",
+        title: "参考文档",
         icon: "lucide:bookmark",
         items: [
             {

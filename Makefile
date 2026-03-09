@@ -1,11 +1,13 @@
 .DEFAULT_GOAL := help
 
 BLOG_DIR ?= src/content/blog
+BLOG_BACKUP_DIR ?= backups/blog
 POST_TOOL := node scripts/blog-manager.mjs
+NODE_BIN := ./node_modules/.bin
 REMOTE ?= origin
 BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null || printf 'main')
 
-.PHONY: help post-new post-list post-find post-edit post-delete post-clean post-rename dev check build preview search-index search-clean lint git-status git-diff git-add git-commit git-push publish
+.PHONY: help post-new post-template post-templates post-draft post-publish post-list post-find post-edit post-delete post-clean post-rename post-backup dev check build preview search-index search-clean lint git-status git-diff git-add git-commit git-push publish
 
 help:
 	@printf '%s\n' \
@@ -17,7 +19,19 @@ help:
 	'      List all posts under $(BLOG_DIR).' \
 	'' \
 	'  make post-new title="My Post" desc="Short description" badge=Pin tags="Astro,Notes" categories="Docs"' \
-	'      Create a new post. Optional vars: slug, date, updated, image, ext=md|mdx, draft=1, open=1.' \
+	'      Create a new post. Optional vars: slug, date, updated, image, ext=md|mdx, draft=1, open=1, template=essay|guide|weekly|note.' \
+	'' \
+	'  make post-template title="Ops Guide" template=guide open=1' \
+	'      Create a post from a named template.' \
+	'' \
+	'  make post-templates' \
+	'      List all built-in starter templates.' \
+	'' \
+	'  make post-draft title="Idea" template=note open=1' \
+	'      Create a draft post with draft=true.' \
+	'' \
+	'  make post-publish slug=idea badge=Pin' \
+	'      Mark a post as published and refresh updated date. Optional vars: date, updated, badge, clear_badge=1.' \
 	'' \
 	'  make post-edit slug=my-post EDITOR="code -w"' \
 	'      Open an existing post with $$EDITOR.' \
@@ -34,8 +48,13 @@ help:
 	'  make post-clean force=1' \
 	'      Delete all posts in $(BLOG_DIR). force=1 is required.' \
 	'' \
+	'  make post-backup' \
+	'      Copy $(BLOG_DIR) into a timestamped local backup directory.' \
+	'' \
 	'Common content flows:' \
 	'  make post-new title="Weekly Review" desc="Week 10 notes" badge=Pin tags="Review,Weekly" categories="Journal" open=1' \
+	'  make post-draft title="New Idea" template=note open=1' \
+	'  make post-publish slug=new-idea' \
 	'  make post-find q=Pin' \
 	'  make post-delete slug=old-post force=1' \
 	'' \
@@ -68,11 +87,27 @@ help:
 	'      Run check + build + git add . + git commit + git push.' \
 	'' \
 	'Variables:' \
-	'  BLOG_DIR=$(BLOG_DIR) REMOTE=$(REMOTE) BRANCH=$(BRANCH) EDITOR=$(EDITOR)'
+	'  BLOG_DIR=$(BLOG_DIR) BLOG_BACKUP_DIR=$(BLOG_BACKUP_DIR) REMOTE=$(REMOTE) BRANCH=$(BRANCH) EDITOR=$(EDITOR)'
 
 post-new:
 	@test -n "$(title)" || { echo 'title is required: make post-new title="My Post"'; exit 1; }
-	@$(POST_TOOL) new --dir "$(BLOG_DIR)" --title "$(title)" $(if $(slug),--slug "$(slug)") $(if $(desc),--desc "$(desc)") $(if $(description),--description "$(description)") $(if $(date),--date "$(date)") $(if $(updated),--updated "$(updated)") $(if $(image),--image "$(image)") $(if $(badge),--badge "$(badge)") $(if $(tags),--tags "$(tags)") $(if $(categories),--categories "$(categories)") $(if $(ext),--ext "$(ext)") $(if $(body),--body "$(body)") $(if $(draft),--draft "$(draft)") $(if $(open),--open "$(open)")
+	@$(POST_TOOL) new --dir "$(BLOG_DIR)" --title "$(title)" $(if $(slug),--slug "$(slug)") $(if $(desc),--desc "$(desc)") $(if $(description),--description "$(description)") $(if $(date),--date "$(date)") $(if $(updated),--updated "$(updated)") $(if $(image),--image "$(image)") $(if $(badge),--badge "$(badge)") $(if $(tags),--tags "$(tags)") $(if $(categories),--categories "$(categories)") $(if $(ext),--ext "$(ext)") $(if $(body),--body "$(body)") $(if $(draft),--draft "$(draft)") $(if $(open),--open "$(open)") $(if $(template),--template "$(template)")
+
+post-template:
+	@test -n "$(title)" || { echo 'title is required: make post-template title="My Post" template=guide'; exit 1; }
+	@test -n "$(template)" || { echo 'template is required: make post-template title="My Post" template=guide'; exit 1; }
+	@$(POST_TOOL) new --dir "$(BLOG_DIR)" --title "$(title)" --template "$(template)" $(if $(slug),--slug "$(slug)") $(if $(desc),--desc "$(desc)") $(if $(description),--description "$(description)") $(if $(date),--date "$(date)") $(if $(updated),--updated "$(updated)") $(if $(image),--image "$(image)") $(if $(badge),--badge "$(badge)") $(if $(tags),--tags "$(tags)") $(if $(categories),--categories "$(categories)") $(if $(ext),--ext "$(ext)") $(if $(open),--open "$(open)")
+
+post-templates:
+	@$(POST_TOOL) templates
+
+post-draft:
+	@test -n "$(title)" || { echo 'title is required: make post-draft title="Idea"'; exit 1; }
+	@$(POST_TOOL) draft --dir "$(BLOG_DIR)" --title "$(title)" $(if $(slug),--slug "$(slug)") $(if $(desc),--desc "$(desc)") $(if $(description),--description "$(description)") $(if $(date),--date "$(date)") $(if $(updated),--updated "$(updated)") $(if $(image),--image "$(image)") $(if $(badge),--badge "$(badge)") $(if $(tags),--tags "$(tags)") $(if $(categories),--categories "$(categories)") $(if $(ext),--ext "$(ext)") $(if $(body),--body "$(body)") $(if $(open),--open "$(open)") $(if $(template),--template "$(template)")
+
+post-publish:
+	@test -n "$(slug)" || { echo 'slug is required: make post-publish slug=my-post'; exit 1; }
+	@$(POST_TOOL) publish --dir "$(BLOG_DIR)" --slug "$(slug)" $(if $(date),--date "$(date)") $(if $(updated),--updated "$(updated)") $(if $(badge),--badge "$(badge)") $(if $(filter 1 true yes on,$(clear_badge)),--clear-badge)
 
 post-list:
 	@$(POST_TOOL) list --dir "$(BLOG_DIR)"
@@ -97,26 +132,34 @@ post-rename:
 	@test -n "$(new_slug)" || { echo 'new_slug is required: make post-rename slug=old new_slug=new'; exit 1; }
 	@$(POST_TOOL) rename --dir "$(BLOG_DIR)" --slug "$(slug)" --new-slug "$(new_slug)"
 
+post-backup:
+	@$(POST_TOOL) backup --dir "$(BLOG_DIR)" --backup-dir "$(BLOG_BACKUP_DIR)"
+
 dev:
-	pnpm run dev
+	$(NODE_BIN)/astro dev
 
 check:
-	pnpm run check
+	$(NODE_BIN)/astro check
 
 build:
-	pnpm run build
+	node scripts/fetch-music-duration.mjs
+	$(NODE_BIN)/astro check
+	$(NODE_BIN)/astro build
+	$(NODE_BIN)/pagefind --site dist
+	mkdir -p public/pagefind
+	$(NODE_BIN)/cpy 'dist/pagefind/**' public/pagefind
 
 preview:
-	pnpm run preview
+	$(NODE_BIN)/astro preview
 
 search-index:
-	pnpm run search:index
+	$(MAKE) build
 
 search-clean:
-	pnpm run search:clean
+	rm -rf public/pagefind dist/pagefind
 
 lint:
-	pnpm exec eslint .
+	$(NODE_BIN)/eslint .
 
 git-status:
 	git status --short --branch
