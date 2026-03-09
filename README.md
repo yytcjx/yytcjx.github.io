@@ -90,28 +90,40 @@ RyuChan 提供了强大的在线文章发布功能，让你无需本地开发环
 
 ### 🔑 如何获取导入的 `.pem` 私钥  
 
-如果你要使用 `/write` 或 `/config` 的在线写作 / 在线配置功能，需要自己创建一个 **GitHub App**，然后下载它的私钥。流程如下：
+如果你要使用 `/write` 或 `/config` 的在线写作 / 在线配置功能，需要先创建一个 **GitHub App**。这个 `.pem` 私钥不在仓库里，不在 `Settings -> Deploy keys`，也不在 GitHub Pages 页面里。
 
-1. 打开 GitHub：
-   `Settings` -> `Developer settings` -> `GitHub Apps` -> `New GitHub App`
-2. 创建一个新的 GitHub App，建议最少配置为：
-   - `GitHub App name`：自定义，例如 `ryuchan-writer`
-   - `Homepage URL`：你的博客地址，或者仓库地址
-   - `Webhook`：如果你没有后端服务，可以先关闭
-   - `Repository permissions`：
-     - `Contents`: `Read and write`
-     - `Metadata`: `Read-only`
-3. `Where can this GitHub App be installed?`
-   - 建议选择 `Only on this account`
-4. 创建完成后，进入这个 App 的 `General` 页面：
-   - 记下 `App ID`
-   - 在 `Private keys` 区域点击 `Generate a private key`
-5. GitHub 会自动下载一个 `.pem` 文件：
-   - 这个文件就是 `/write` 页面里需要导入的密钥
-   - GitHub 不会再次完整展示这个私钥，请妥善保存
-6. 点击 `Install App`，把这个 GitHub App 安装到你的博客仓库上：
-   - 建议只授权当前博客仓库
-7. 打开博客的 `/write` 或 `/config` 页面，点击“导入密钥”，选择刚下载的 `.pem` 文件即可
+#### 按 GitHub 页面一步一步点哪里
+
+1. 打开 GitHub 右上角头像，点击 `Settings`
+2. 在左侧最下面点击 `Developer settings`
+3. 点击 `GitHub Apps`
+4. 点击右上角 `New GitHub App`
+5. 在创建页面至少填写这些内容：
+   - `GitHub App name`：例如 `ryuchan-writer`
+   - `Homepage URL`：你的博客地址或仓库地址
+   - `Webhook`：如果没有后端服务，可以先取消勾选 `Active`
+   - `Repository permissions -> Contents`：选择 `Read and write`
+   - `Repository permissions -> Metadata`：保持 `Read-only`
+   - `Where can this GitHub App be installed?`：选择 `Only on this account`
+6. 点页面底部 `Create GitHub App`
+7. 创建完成后会进入 App 的 `General` 页面：
+   - 先记下这里显示的 `App ID`
+   - 往下滚动到 `Private keys`
+   - 点击 `Generate a private key`
+8. 浏览器会立刻下载一个 `.pem` 文件：
+   - 这个文件就是 `/write` 页面里要导入的密钥
+   - GitHub 不会再次完整展示旧私钥，丢了就要重新生成
+9. 在同一个 GitHub App 页面点击左侧 `Install App`
+10. 选择你的账号，然后在仓库列表里只勾选 `yytcjx/yytcjx.github.io`
+11. 点击 `Install`
+12. 最后打开你的博客 `/write` 或 `/config` 页面，点击“导入密钥”，选择刚下载的 `.pem`
+
+#### 这几个位置不要找
+
+- 不要去仓库 `Settings -> Deploy keys`
+- 不要去仓库 `Settings -> Secrets and variables`
+- 不要去 `Settings -> Pages`
+- 不要在仓库代码里找现成的 `.pem`
 
 ### 🧭 如果你现在用的是 `用户名.github.io`
 
@@ -226,6 +238,28 @@ env:
 - `PUBLIC_GITHUB_ENCRYPT_KEY = 任意一段你自己定义的字符串`
 
 当前仓库的 `deploy.yml` 已经支持在构建阶段读取这些变量，因此你不需要把它们硬编码到工作流里。
+
+#### 你的 `yytcjx.github.io` 仓库还要点哪些页面
+
+1. 打开仓库 `yytcjx/yytcjx.github.io`
+2. 点击仓库页顶部 `Settings`
+3. 点击左侧 `Pages`
+4. 在 `Build and deployment` 里把 `Source` 改成 `GitHub Actions`
+5. 再回到左侧 `Secrets and variables` -> `Actions`
+6. 打开 `Variables` 标签页
+7. 点击 `New repository variable`，依次创建：
+   - `PUBLIC_GITHUB_OWNER = yytcjx`
+   - `PUBLIC_GITHUB_REPO = yytcjx.github.io`
+   - `PUBLIC_GITHUB_BRANCH = main`
+   - `PUBLIC_GITHUB_APP_ID = 你刚才记下来的 App ID`
+   - `PUBLIC_GITHUB_ENCRYPT_KEY = 你自己定义的一段字符串`
+8. 确认 `.github/workflows/deploy.yml` 已经存在于仓库默认分支
+9. 推送代码后，到仓库 `Actions` 页面确认 `deploy` 工作流成功
+
+这样配置后：
+
+- GitHub Pages 负责部署站点
+- GitHub App + `.pem` 负责让 `/write` 写回仓库
 
 ### 🚨 如果你看到 `actions/jekyll-build-pages@v1` 报错
 
