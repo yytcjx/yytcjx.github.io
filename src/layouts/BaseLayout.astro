@@ -5,6 +5,7 @@ import {
   SITE_FAVICON,
   SITE_LANGUAGE,
   SITE_THEME,
+  GITHUB_CONFIG as SITE_GITHUB_CONFIG,
   umamiConfig,
   SITE_PAGES,
 } from "@config";
@@ -89,10 +90,20 @@ const bannerSubtitle = pageConfig?.subtitle || "";
       })(window, document, "clarity", "script", "skz108rus8");
     </script>
 
-    <!-- 主题管理脚本 -->
-    <script define:vars={{ SITE_THEME }} is:inline>
-      (function () {
-        const storedTheme = localStorage.getItem("theme");
+	    <!-- 主题管理脚本 -->
+	    <script define:vars={{ SITE_GITHUB_CONFIG }} is:inline>
+	      window.__RYUCHAN_GITHUB_CONFIG__ = {
+	        owner: SITE_GITHUB_CONFIG?.owner || "",
+	        repo: SITE_GITHUB_CONFIG?.repo || "",
+	        branch: SITE_GITHUB_CONFIG?.branch || "main",
+	        appId: SITE_GITHUB_CONFIG?.appId || "",
+	        encryptKey: SITE_GITHUB_CONFIG?.encryptKey || "",
+	      };
+	    </script>
+
+	    <script define:vars={{ SITE_THEME }} is:inline>
+	      (function () {
+	        const storedTheme = localStorage.getItem("theme");
         const storedBannerMode = localStorage.getItem("banner-mode") || "normal";
         const prefersDark = window.matchMedia(
           "(prefers-color-scheme: dark)",

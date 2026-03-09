@@ -76,9 +76,9 @@ export function ConfigPage() {
     }, [configContent, mode])
 
     const loadConfig = async () => {
+        let token: string | undefined
         try {
             setLoading(true)
-            let token: string | undefined
             try {
                 token = await getAuthToken()
             } catch (e) {
@@ -109,6 +109,10 @@ export function ConfigPage() {
                 setLastFetchedContent(content)
             }
         } catch (error: any) {
+            if (!token && error?.message?.includes('read file failed: 403')) {
+                console.warn('Public config read was forbidden by GitHub API, waiting for private key import')
+                return
+            }
             toast.error('加载配置失败: ' + error.message)
         } finally {
             setLoading(false)
