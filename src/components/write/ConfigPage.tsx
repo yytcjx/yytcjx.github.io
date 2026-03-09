@@ -75,8 +75,12 @@ export function ConfigPage({ initialConfigContent = '' }: ConfigPageProps) {
     const [pendingImages, setPendingImages] = useState<Record<string, { file: File, previewUrl: string }>>({})
 
     useEffect(() => {
+        if (initialConfigContent) {
+            setLastFetchedContent(initialConfigContent)
+            return
+        }
         loadConfig()
-    }, [isAuth])
+    }, [initialConfigContent])
 
     useEffect(() => {
         if (configContent && mode === 'visual') {
